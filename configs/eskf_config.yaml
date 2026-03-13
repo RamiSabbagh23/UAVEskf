@@ -1,0 +1,101 @@
+paths:
+  airsim_settings: "~/Documents/AirSim/settings.json"
+
+vehicle:
+  name: "Drone1"
+
+sensors:
+  use_gps: true
+  use_baro: true
+  use_mag: true
+
+periods:
+  imu: 0.001
+  gps: 0.05
+  baro: 0.02
+  mag: 0.02
+
+initial_covariance:
+  sigma_p: 2.0
+  sigma_v: 1.0
+  sigma_theta: 0.2
+  sigma_ba: 0.2
+  sigma_bw: 0.02
+  sigma_g: 0.2
+
+control:
+  mode: "manual"
+
+manual_control:
+  enable: true
+  speed: 5.0
+  yaw_speed: 30.0
+  command_duration: 0.1
+  loop_sleep: 0.02
+  record_enable: true
+  record_path: "../outputs/control/last_manual_control.yaml"
+
+  keys:
+    emergency: "esc"
+    takeoff: "t"
+    land: "l"
+    forward: "w"
+    backward: "s"
+    left: "a"
+    right: "d"
+    up: "up"
+    down: "down"
+    yaw_left: "left"
+    yaw_right: "right"
+
+automatic_control:
+  loop_sleep: 0.02
+  takeoff_on_start: true
+  finish_hover_duration: 1.0
+  land_on_finish: true
+  use_recorded_commands: true
+  recorded_commands_path: "../outputs/control/last_manual_control.yaml"
+  steps:
+    - name: "forward"
+      vx: 2.0
+      vy: 0.0
+      vz: 0.0
+      yaw_rate: 0.0
+      duration: 3.0
+    - name: "right"
+      vx: 0.0
+      vy: 2.0
+      vz: 0.0
+      yaw_rate: 0.0
+      duration: 3.0
+    - name: "backward"
+      vx: -2.0
+      vy: 0.0
+      vz: 0.0
+      yaw_rate: 0.0
+      duration: 3.0
+    - name: "left"
+      vx: 0.0
+      vy: -2.0
+      vz: 0.0
+      yaw_rate: 0.0
+      duration: 3.0
+    - name: "yaw_spin"
+      vx: 0.0
+      vy: 0.0
+      vz: 0.0
+      yaw_rate: 25.0
+      duration: 3.0
+
+printing:
+  state_period: 1.0
+
+plotting:
+  airsim_enable: true
+  airsim_period: 0.2
+  max_points: 2000
+  duration: 0.35
+
+  live_enable: true
+  live_max_points: 1000
+  live_title: "Live ESKF vs Ground Truth"

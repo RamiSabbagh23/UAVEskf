@@ -1,0 +1,279 @@
+# UAVFusionDL
+
+`UAVFusionDL` is a Python workspace for AirSim-based UAV state estimation with an error-state Kalman filter (ESKF). It includes:
+
+- live ESKF estimation from IMU, GPS, barometer, and magnetometer data
+- keyboard manual control
+- automatic control from either configured steps or a recorded manual flight
+- low-latency live plotting with `pyqtgraph`
+- run logging and plot export on shutdown
+
+## Workspace Layout
+
+```text
+configs/
+  eskf_config.yaml          Main runtime configuration
+
+scripts/
+  main.py                   Main live ESKF runtime
+  automatic_control.py      Automatic control only
+  eskf.py                   Older standalone ESKF script
+  manual_control.py         Older standalone manual control script
+
+src/fusionUAV/
+  eskf/                     ESKF core
+  runtime/                  Runtime, control, config loading, logging
+  sensors/                  AirSim sensor readers and sensor config builders
+  visualization/            Live plot and AirSim plot helpers
+  utils/                    Rotation and utility helpers
+
+outputs/
+  live_eskf/                Logged runs and exported plots
+  control/                  Recorded manual command sequences
+```
+
+## Requirements
+
+- Python `>= 3.10`
+- Windows is the expected environment for keyboard control
+- AirSim running locally
+- an AirSim `settings.json` file with the configured vehicle and sensors
+
+Direct Python dependencies used by this workspace:
+
+- `numpy`
+- `PyYAML`
+- `airsim`
+- `keyboard`
+- `msgpack-rpc-python`
+- `PyQt5`
+- `pyqtgraph`
+
+## Installation
+
+### Manual install
+
+```powershell
+python -m pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+pip install airsim --no-build-isolation
+pip install -e .
+```
+
+### PowerShell helper
+
+```powershell
+.\install.ps1
+```
+
+## Configuration
+
+Main config:
+
+[`configs/eskf_config.yaml`](/c:/Users/RS/UAVFusionDL/configs/eskf_config.yaml)
+
+Important sections:
+
+- `paths.airsim_settings`
+  - AirSim `settings.json` path
+- `vehicle.name`
+  - vehicle name, for example `Drone1`
+- `sensors`
+  - enable or disable GPS, barometer, and magnetometer updates
+- `periods`
+  - update periods for IMU, GPS, barometer, and magnetometer
+- `initial_covariance`
+  - initial ESKF covariance standard deviations
+- `control.mode`
+  - one of `manual`, `automatic`, or `off`
+- `manual_control`
+  - keyboard control settings and command recording options
+- `automatic_control`
+  - recorded-command replay settings and fallback automatic steps
+- `printing`
+  - console print period
+- `plotting`
+  - AirSim plot and live plot options
+
+## Control Modes
+
+### Manual mode
+
+Set:
+
+```yaml
+control:
+  mode: "manual"
+```
+
+Manual control is handled by [`manual_control.py`](/c:/Users/RS/UAVFusionDL/src/fusionUAV/runtime/manual_control.py).
+
+Supported actions:
+
+- takeoff
+- land
+- emergency land and stop
+- forward/backward
+- left/right strafe
+- up/down
+- yaw left/right
+
+If `manual_control.record_enable: true`, the runtime records the executed command segments and saves them to:
+
+[`outputs/control/last_manual_control.yaml`](/c:/Users/RS/UAVFusionDL/outputs/control/last_manual_control.yaml)
+
+The recording is saved when the run stops.
+
+### Automatic mode
+
+Set:
+
+```yaml
+control:
+  mode: "automatic"
+```
+
+Automatic control is handled by [`automatic_control.py`](/c:/Users/RS/UAVFusionDL/src/fusionUAV/runtime/automatic_control.py).
+
+It can run in two ways:
+
+1. Replay a recorded manual flight if `automatic_control.use_recorded_commands: true` and the recording file exists.
+2. Fall back to the configured `automatic_control.steps` sequence if no recording is available.
+
+Supported automatic step modes:
+
+- `takeoff`
+- `hover`
+- `velocity`
+- `attitude`
+- `land`
+
+Example velocity step:
+
+```yaml
+automatic_control:
+  steps:
+    - name: "forward"
+      mode: "velocity"
+      vx: 2.0
+      vy: 0.0
+      vz: 0.0
+      yaw_rate: 0.0
+      duration: 3.0
+```
+
+## Running
+
+### Main live runtime
+
+Entry point:
+
+[`main.py`](/c:/Users/RS/UAVFusionDL/scripts/main.py)
+
+Run:
+
+```powershell
+python scripts/main.py
+```
+
+What it does:
+
+- resets AirSim before startup
+- waits for fresh post-reset ground truth and GPS state
+- starts the live ESKF runtime
+- optionally starts manual or automatic control
+- updates the live `pyqtgraph` plot
+- optionally draws estimate vs ground truth in AirSim
+- logs the full run history
+- saves CSV and PNG artifacts on exit
+
+### Automatic controller only
+
+Entry point:
+
+[`automatic_control.py`](/c:/Users/RS/UAVFusionDL/scripts/automatic_control.py)
+
+Run:
+
+```powershell
+python scripts/automatic_control.py
+```
+
+### Legacy scripts
+
+These still exist for comparison and quick checks:
+
+- [`eskf.py`](/c:/Users/RS/UAVFusionDL/scripts/eskf.py)
+- [`manual_control.py`](/c:/Users/RS/UAVFusionDL/scripts/manual_control.py)
+
+## Outputs
+
+### Live run outputs
+
+When [`main.py`](/c:/Users/RS/UAVFusionDL/scripts/main.py) stops, it writes a timestamped folder under:
+
+```text
+outputs/live_eskf/YYYYMMDD_HHMMSS/
+```
+
+Artifacts are generated by [`run_logger.py`](/c:/Users/RS/UAVFusionDL/src/fusionUAV/runtime/run_logger.py).
+
+Saved files include:
+
+- `state_log.csv`
+- `position_est_vs_gt.png`
+- `velocity_est_vs_gt.png`
+- `quaternion_est_vs_gt.png`
+- `accel_bias_est.png`
+- `gyro_bias_est.png`
+- `gravity_vector_est.png`
+- `live_position_plot.png`
+
+The CSV includes:
+
+- time
+- estimated position, velocity, quaternion
+- ground truth position, velocity, quaternion
+- estimated accelerometer bias
+- estimated gyroscope bias
+- estimated gravity vector
+
+### Manual command recordings
+
+Manual recordings are stored under:
+
+```text
+outputs/control/
+```
+
+Default file:
+
+- `last_manual_control.yaml`
+
+This file is used by automatic replay when enabled in the config.
+
+## Plotting Notes
+
+- The live plot uses `pyqtgraph`, not Matplotlib.
+- The saved result plots also use `pyqtgraph` export.
+- The live plot update rate is currently hardcoded in [`main.py`](/c:/Users/RS/UAVFusionDL/scripts/main.py) as `live_plot_period = 0.05`.
+- The saved `position_est_vs_gt.png` is generated from the full logger history, while `live_position_plot.png` is an export of the live GUI window.
+
+## Sensor Configuration
+
+Sensor noise and covariance settings are built from the AirSim `settings.json` file in:
+
+[`build_from_settings.py`](/c:/Users/RS/UAVFusionDL/src/fusionUAV/sensors/build_from_settings.py)
+
+This includes:
+
+- IMU white noise and bias random walk
+- GPS covariance
+- barometer altitude noise
+- magnetometer covariance and reference field
+
+## Development Notes
+
+- Package metadata is in [`pyproject.toml`](/c:/Users/RS/UAVFusionDL/pyproject.toml).
+- Runtime dependencies are listed in [`requirements.txt`](/c:/Users/RS/UAVFusionDL/requirements.txt).
+- There is no committed `tests/` directory in the current workspace snapshot.

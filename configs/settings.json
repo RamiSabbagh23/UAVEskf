@@ -1,0 +1,122 @@
+{
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor",
+  "ClockSpeed": 1,
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "ImageType": 0,
+        "Width": 10,
+        "Height": 7.5,
+        "FOV_Degrees": 2700,
+        "MotionBlurAmount": 0
+      }
+    ]
+  },
+  "OriginGeopoint": {
+    "Latitude": 47.641482,
+    "Longitude": -122.140141,
+    "Altitude": 122
+  },
+
+
+  "Vehicles": {
+    "Drone1": {
+      "VehicleType": "SimpleFlight",
+      "AutoCreate": true,
+      "DefaultVehicleState": "Armed",
+
+      "Sensors": {
+        "Imu": {
+          "SensorType": 2,
+          "Enabled": true,
+          "X": 0, "Y": 0, "Z": 0,
+          "Roll": 0, "Pitch": 0, "Yaw": 0,
+          "AngularRandomWalk": 0.8,
+          "GyroBiasStabilityTau": 120,
+          "GyroBiasStability": 120.0,
+          "VelocityRandomWalk": 0.8,
+          "AccelBiasStabilityTau": 200,
+          "AccelBiasStability": 120.0,
+          "UpdateFrequency": 200
+        },
+
+        "Gps": {
+          "SensorType": 3,
+          "Enabled": true,
+          "X": 0, "Y": 0, "Z": 0,
+          "EphInitial": 5.0,
+          "EphFinal": 1.5,
+          "EphTimeConstant": 30.0,
+          "EpvInitial": 8.0,
+          "EpvFinal": 2.5,
+          "EpvTimeConstant": 30.0,
+          "UpdateFrequency": 5
+        },
+
+        "Barometer": {
+          "SensorType": 1,
+          "Enabled": true,
+          "X": 0, "Y": 0, "Z": 0,
+          "PressureFactorSigma": 0.004,
+          "PressureFactorTau": 600,
+          "UncorrelatedNoiseSigma": 6.0,
+          "UpdateFrequency": 50
+        },
+
+        "Magnetometer": {
+          "SensorType": 4,
+          "Enabled": true,
+          "X": 0, "Y": 0, "Z": 0,
+          "NoiseSigma": 0.02,
+          "UpdateFrequency": 50
+        }
+      },
+
+      "Cameras": {
+        "MyFrontCamera": {
+          "X": 0.5, "Y": 0.0, "Z": -0.1,
+          "Pitch": 0, "Roll": 0, "Yaw": 0,
+          "CaptureSettings": [
+            { "ImageType": 0, "Width": 320, "Height": 240, "FOV_Degrees": 90 },
+            { "ImageType": 1, "Width": 320, "Height": 240, "FOV_Degrees": 90 }
+          ],
+          "NoiseSettings": [
+            {
+              "Enabled": true,
+              "ImageType": 0,
+              "RandContrib": 0.10,
+              "RandSpeed": 100000,
+              "RandSize": 1.0,
+              "RandDensity": 0.125,
+              "HorzNoiseLinesContrib": 0.05,
+              "HorzNoiseLinesDensityY": 0.02,
+              "HorzNoiseLinesDensityXY": 0.08,
+              "HorzDistortionContrib": 0.03,
+              "HorzDistortionStrength": 0.002
+            }
+          ]
+        },
+
+        "MyDownCamera": {
+          "X": 0.0, "Y": 0.0, "Z": 0.1,
+          "Pitch": -90, "Roll": 0, "Yaw": 0,
+          "CaptureSettings": [
+            { "ImageType": 0, "Width": 640, "Height": 480, "FOV_Degrees": 90 },
+            { "ImageType": 1, "Width": 640, "Height": 480, "FOV_Degrees": 90 }
+          ],
+          "NoiseSettings": [
+            {
+              "Enabled": true,
+              "ImageType": 0,
+              "RandContrib": 0.10,
+              "RandSpeed": 100000,
+              "RandSize": 2.0,
+              "RandDensity": 0.25
+            }
+          ]
+        }
+      }
+    }
+  }
+}

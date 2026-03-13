@@ -1,0 +1,6 @@
+numpy>=2.0
+PyYAML>=6.0
+keyboard>=0.13.5
+msgpack-rpc-python>=0.4.1
+PyQt5>=5.15
+pyqtgraph>=0.13
