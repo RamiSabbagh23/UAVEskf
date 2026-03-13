@@ -4,4 +4,4 @@ pip install -r requirements.txt
 
 pip install airsim --no-build-isolation
 
-pip install -e.
+pip install -e .
