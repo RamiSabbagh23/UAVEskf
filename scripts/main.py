@@ -8,9 +8,6 @@ import airsim
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
 
 from fusionUAV.runtime.automatic_control import AutomaticControlRunner
 from fusionUAV.runtime.eskf_runtime import LiveESKFRunner, load_app_config
