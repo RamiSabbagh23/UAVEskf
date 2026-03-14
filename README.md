@@ -1,6 +1,7 @@
 # fusionUAV
 
 `fusionUAV` is a Python workspace for AirSim-based UAV state estimation with an error-state Kalman filter (ESKF). It includes live sensor fusion, optional manual or automatic control, live plotting, and run logging/export.
+This project was developed as part of a university project for the course "Selected Topics in Robotics and AI".
 
 ## Features
 
