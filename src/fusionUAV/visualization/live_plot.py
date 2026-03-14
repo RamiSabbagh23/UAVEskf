@@ -70,24 +70,24 @@ class LivePositionPlotter:
         self.plot_x = self._create_plot(
             row=0,
             label="x [m]",
-            est_name="est_x",
-            gt_name="gt_x",
+            est_name="Est",
+            gt_name="Gt",
             est_pen=est_pen,
             gt_pen=gt_pen,
         )
         self.plot_y = self._create_plot(
             row=1,
             label="y [m]",
-            est_name="est_y",
-            gt_name="gt_y",
+            est_name="Est",
+            gt_name="Gt",
             est_pen=est_pen,
             gt_pen=gt_pen,
         )
         self.plot_z = self._create_plot(
             row=2,
             label="z [m]",
-            est_name="est_z",
-            gt_name="gt_z",
+            est_name="Est",
+            gt_name="Gt",
             est_pen=est_pen,
             gt_pen=gt_pen,
             add_bottom_label=True,
